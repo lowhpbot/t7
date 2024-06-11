@@ -1,69 +1,46 @@
-import javax.swing.*;
-import java.util.Random;
+import java.util.Scanner;
 
-public class Main {
+public class CircleCalculator {
+    
     public static void main(String[] args) {
-        try {
-            int n = Integer.parseInt(JOptionPane.showInputDialog("Введите размерность матриц (n):"));
-            double minRange = Double.parseDouble(JOptionPane.showInputDialog("Введите минимальное значение диапазона:"));
-            double maxRange = Double.parseDouble(JOptionPane.showInputDialog("Введите максимальное значение диапазона:"));
-
-            if (n <= 0 || minRange >= maxRange) {
-                throw new IllegalArgumentException("Некорректные данные.");
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Выберите цель расчета: ");
+        System.out.println("1. Площадь");
+        System.out.println("2. Длина окружности");
+        int choice = scanner.nextInt();
+        
+        double radius;
+        do {
+            System.out.println("Введите радиус:");
+            while (!scanner.hasNextDouble()) {
+                System.out.println("Некорректный ввод. Пожалуйста, введите число:");
+                scanner.next();
             }
-
-            double[][] matrixA = generateMatrix(n, minRange, maxRange);
-            double[][] matrixB = generateMatrix(n, minRange, maxRange);
-            double[][] resultMatrix = multiplyMatrices(matrixA, matrixB, n);
-
-            StringBuilder result = new StringBuilder();
-            result.append("Матрица A:\n").append(matrixToString(matrixA, n))
-                    .append("\nМатрица B:\n").append(matrixToString(matrixB, n))
-                    .append("\nРезультат произведения:\n").append(matrixToString(resultMatrix, n));
-
-            JOptionPane.showMessageDialog(null, result.toString());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Некорректный ввод. Пожалуйста, введите числовые значения.");
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            radius = scanner.nextDouble();
+        } while (radius <= 0); 
+        
+        switch (choice) {
+            case 1:
+                double area = calculateArea(radius);
+                System.out.println("Площадь круга: " + area);
+                break;
+            case 2:
+                double circumference = calculateCircumference(radius);
+                System.out.println("Длина окружности: " + circumference);
+                break;
+            default:
+                System.out.println("Некорректный выбор.");
         }
+        
+        scanner.close();
     }
-
-    private static double[][] generateMatrix(int size, double min, double max) {
-        double[][] matrix = new double[size][size];
-        Random random = new Random();
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                matrix[i][j] = min + (max - min) * random.nextDouble();
-            }
-        }
-        return matrix;
+    
+    public static double calculateArea(double radius) {
+        return Math.PI * radius * radius;
     }
-
-    private static double[][] multiplyMatrices(double[][] a, double[][] b, int size) {
-        double[][] result = new double[size][size];
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                result[i][j] = 0;
-                for (int k = 0; k < size; k++) {
-                    result[i][j] += a[i][k] * b[k][j];
-                }
-            }
-        }
-        return result;
-    }
-
-    private static String matrixToString(double[][] matrix, int size) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                sb.append(String.format("%10.4f", matrix[i][j])).append(" ");
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
+    
+    public static double calculateCircumference(double radius) {
+        return 2 * Math.PI * radius;
     }
 }
